@@ -32,7 +32,7 @@ A polymer 2.0 element used to scroll between a list of images
 -->
 ```html
 <the-carousel autoplay duration=5000
-            images='["../images/snow.JPG","../images/red.JPG","../images/ship.JPG"]'></the-carousel>
+            images='["images/snow.JPG","images/red.JPG","images/ship.JPG"]'></the-carousel>
 ```
 
 ## Contributing
