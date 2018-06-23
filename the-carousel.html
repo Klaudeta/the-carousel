@@ -1,0 +1,36 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="the-carousel">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+  </template>
+
+  <script>
+    /**
+     * `the-carousel`
+     * A polymer 2.0 element to scroll between a list of images
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TheCarousel extends Polymer.Element {
+      static get is() { return 'the-carousel'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'the-carousel'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(TheCarousel.is, TheCarousel);
+  </script>
+</dom-module>
