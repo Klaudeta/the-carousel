@@ -31,11 +31,8 @@ A polymer 2.0 element used to scroll between a list of images
 ```
 -->
 ```html
-<the-carousel  autoplay  duration=5000
-    images='["https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg", 
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL2asHDVVFOqOOXGmzdZeOBZxUucMmDCgaWPVEJ1mMjghWF3ZY", 
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlos4IjGrRquY7T5OL3YS2pu4ehW-lvM5T4RpUv14ghYaA1Gz-fA"]'
-></the-carousel>
+<the-carousel autoplay duration=5000
+            images='["../images/snow.JPG","../images/red.JPG","../images/ship.JPG"]'></the-carousel>
 ```
 
 ## Contributing
