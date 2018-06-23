@@ -2,6 +2,11 @@
   "name": "the-carousel",
   "description": "A polymer 2.0 element to scroll between a list of images",
   "main": "the-carousel.html",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Klaudeta/the-carousel.git"
+  },
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0"
   },
