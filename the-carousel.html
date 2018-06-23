@@ -1,36 +1,266 @@
+
 <link rel="import" href="../polymer/polymer-element.html">
+<script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  
+<!-- 
+	`<the-carousel>` purpose is to scroll between a list of images by user interaction
+		or by itself using a interval defined in ms
 
+	Use `images` to set list of image URLs to load on carousel
+
+	Example:
+
+		<the-carousel  
+				images='["https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg", 
+				"https://cs1.livemaster.ru/storage/e6/45/00b119c13ed9f8b4dc6363a60d--materialy-dlya-tvorchestva-nabor-dlya-vyshivki-biserom-belyj-ti.jpg", 
+				"https://tse4.mm.bing.net/th?id=ORT.TH_470633631&pid=1.12&eid=G.470633631"]'>
+	          
+		</the-carousel>
+		
+	Use `autoplay` and `duration` to automatically scroll between images on defined ms interval by `duration`
+
+	Example:
+
+		<the-carousel  
+				autoplay duration= 5000
+				images='["https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg", 
+				"https://cs1.livemaster.ru/storage/e6/45/00b119c13ed9f8b4dc6363a60d--materialy-dlya-tvorchestva-nabor-dlya-vyshivki-biserom-belyj-ti.jpg", 
+				"https://tse4.mm.bing.net/th?id=ORT.TH_470633631&pid=1.12&eid=G.470633631"]'>
+	          
+		</the-carousel>
+
+-->
 <dom-module id="the-carousel">
-  <template>
+    <template>
     <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <h2>Hello [[prop1]]!</h2>
-  </template>
+	    :host {
+		    display: block;
+		    position: relative;
+		    overflow: hidden;
+		  }
+      img{
+				width:100%;
+				height: 100%;
+			}
+		  img:not([selected]) {
+		    display: none !important;
+		  }
 
-  <script>
-    /**
-     * `the-carousel`
-     * A polymer 2.0 element to scroll between a list of images
-     *
-     * @customElement
-     * @polymer
-     * @demo demo/index.html
-     */
-    class TheCarousel extends Polymer.Element {
-      static get is() { return 'the-carousel'; }
-      static get properties() {
-        return {
-          prop1: {
-            type: String,
-            value: 'the-carousel'
-          }
-        };
-      }
-    }
+		  button {
+			  position: absolute;
+			  top: calc(50% - 20px);
+			  padding: 0;
+			  line-height: 40px;
+			  border: none;
+			  background: none;
+			  color: #DDD;
+			  font-size: 40px;
+			  font-weight: bold;
+			  opacity: 0.7;
+			}
+			
+			button:hover,
+			button:focus {
+			  opacity: 1;
+			}
+			
+			#prevBtn {
+			  left: 12px;
+			}
+			
+			#nextBtn {
+			  right: 12px;
+			}
+			
+			button[disabled] {
+			  opacity: 0.4;
+			}
+	
+	  </style>
+    		<div>
+	    		<slot id="images">
+              <template is="dom-repeat" items='[[images]]' >
+                <img src="[[item]]" >
+            </template>
+          </slot>
+	    <button id="prevBtn" on-click="previous">&#x276E;</button>
+			<button id="nextBtn" on-click="next">&#x276F;</button>
+	  	</div>
+    </template>
 
-    window.customElements.define(TheCarousel.is, TheCarousel);
-  </script>
+    <!-- Polymer boilerplate to register the example-template element -->
+    <script>
+        class TheCarousel extends Polymer.Element {
+            static get is() {
+                return 'the-carousel'
+            }
+            static get properties() {
+            	  return {
+							/** List of image URLs to play on the carousel */
+              images: {
+                type: Array,
+                reflectToAttribute: true
+              },
+							/** Whether images play by themselves. */
+	        		autoplay: {
+       		        type: Boolean,
+       		        value: false,
+       		        observer: '_autoAnimate'
+	        		      },
+							/** Duration in milliseconds for an image to be on the stage. */			
+     		    	duration: {
+	    		          type: Number,
+	    		          value: 2000,
+	    		          reflectToAttribute: true,
+	    		          notify: true,
+	    		          observer: '_setDuration'
+	    		        },
+            	selected: {
+            	      type: Object,
+            	      observer: '_selectedChanged'
+            	    },
+            	selectedIndex: {
+              	      type: Number
+              	    }
+	    		        
+            	  };
+            	}
+            
+            _setDuration(duration){
+            		clearInterval(this._autoInterval);
+            		this._autoAnimate(this.autoplay);
+            }
+            
+            _autoAnimate(autoplay) {
+                if (autoplay) {
+                  this._autoInterval = setInterval(() => {
+                    this.next();
+                  }, this.duration);
+                } else {
+                  clearInterval(this._autoInterval);
+                }
+              }
+            
+            previous() {
+            	  	if (this.selected && this.selectedIndex > 0) {
+            	  		const elem = this._getNodeArray()[this.selectedIndex -1 ];
+	            	    // Setup transition start state
+	            	    const oldSelected = this.selected;
+	            	    this._translateX(oldSelected, 0);
+	            	    this._translateX(elem, -this.offsetWidth);
+	
+	            	    // Start the transition
+	            	    this.selected = elem;
+	            	    this.selectedIndex -=1;
+	            	    this._translateX(oldSelected, this.offsetWidth, true /* transition */);
+	            	    this._translateX(elem, 0, true /* transition */);
+            	  	}
+            	}
+
+            	next() {
+            	  if (this.selected) {
+            		  const lgth = this._getNodeArray().length - 1;
+                  this.selectedIndex = (this.selectedIndex < lgth) ? this.selectedIndex + 1 : 0;
+
+                  const elem = this._getNodeArray()[this.selectedIndex];
+
+                  // Setup transition start state
+                  const oldSelected = this.selected;
+                  this._translateX(oldSelected, 0);
+                  this._translateX(elem, this.offsetWidth);
+                  
+                	this.selected = elem;
+
+                  // Start the transition
+                	this._translateX(oldSelected, -this.offsetWidth, true /* transition */);
+                	this._translateX(elem, 0, true /* transition */);
+ 
+            	  }
+            	}
+            	
+            	_loadImage(img) {
+            		  if (img && !img.src) {
+            		    img.src = img.getAttribute('data-src');
+            		  }
+            		}
+            	
+            	_selectedChanged(selected, oldSelected) {
+	        		  if (oldSelected) oldSelected.removeAttribute('selected');
+	        		  if (selected) selected.setAttribute('selected', '');
+	
+	        		  if (selected) {
+	        		    this.$.prevBtn.disabled = !selected.previousElementSibling;
+	        		    this.$.nextBtn.disabled = !selected.nextElementSibling;
+	        		    
+	        		    this._loadImage(selected);
+	        		    this._loadImage(selected.previousElementSibling);
+	        		    this._loadImage(selected.nextElementSibling);
+	        		    
+	        		  } else {
+	        		    this.$.prevBtn.disabled = true;
+	        		    this.$.nextBtn.disabled = true;
+	        		  }
+	        	}
+            connectedCallback() {
+            	  super.connectedCallback();
+
+            	  this.shadowRoot.addEventListener('slotchange', this._resetSelected.bind(this));
+            	  
+            	  this._resetSelected();
+            	}
+        
+            _getNodeArray(){
+              var arr = this.$.images.assignedNodes({flatten:true});
+            		return arr.filter(n=> n.nodeType === Node.ELEMENT_NODE).filter(i => i instanceof HTMLImageElement);
+            }
+            _resetSelected() {
+            	  if (!this.selected || this.selected.parentElement !== this) {
+            		  var imgArr = this._getNodeArray();
+            		  if(imgArr){
+            			  this.selected = imgArr[0];
+            			  this.selectedIndex = 0;
+            		  }
+            	    		
+            	  }
+            	}
+            
+            _translateX(elem, x, transition) {
+            	  elem.style.display = 'block';
+            	  elem.style.transition = transition ? 'transform 0.4s' : '';
+            	  elem.style.transform = 'translate3d(' + x + 'px, 0, 0)';
+            	}
+            
+            
+            ready() {
+            	  super.ready();
+            	  requestAnimationFrame(this._installListeners.bind(this));
+            	  var that = this;
+            	  setTimeout(function() {
+                  var arr = that.shadowRoot.querySelector('img');
+            		    this._resetSelected();
+            		  }.bind(this), 0);
+            	  
+            	  
+            	}
+
+            	_installListeners() {
+            	  this.addEventListener('transitionend', this._resetChildrenStyles.bind(this));
+            	}
+
+            	_resetChildrenStyles() {
+                const imgs = this._getNodeArray();
+
+            	  if(imgs){
+                  imgs.array.forEach(element => {
+                    let elem = element;
+                   	    elem.style.display = '';
+                   	    elem.style.transition = '';
+                   	    elem.style.transform = '';
+                  });
+               	}
+            	} 
+        }
+        
+        customElements.define(TheCarousel.is, TheCarousel);
+    </script>
 </dom-module>

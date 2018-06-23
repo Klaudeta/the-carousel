@@ -14,6 +14,11 @@
 
     <custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
+        
+        the-carousel{
+          width: 100%;
+           height:374px;
+        } 
       </style>
     </custom-style>
   </head>
@@ -22,7 +27,13 @@
       <h3>Basic the-carousel demo</h3>
       <demo-snippet>
         <template>
-          <the-carousel></the-carousel>
+            
+            <the-carousel autoplay duration=5000
+            images='["https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg", 
+            "https://www.wallpapersforiphone6plus.com/wp-content/uploads/2018/02/Cute-Wallpaper-Mobile-Free-Download-31-with-Cute-Wallpaper-Mobile-Free-Download.jpg", 
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlos4IjGrRquY7T5OL3YS2pu4ehW-lvM5T4RpUv14ghYaA1Gz-fA"]'
+            ></the-carousel>
+
         </template>
       </demo-snippet>
     </div>
